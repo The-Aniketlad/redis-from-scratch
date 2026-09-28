@@ -1,0 +1,16 @@
+# Ignore all Markdown documentation files
+*.md
+
+# Ignore embedded challenge repository
+build-your-own-git/
+
+# Dependencies & Lock files
+node_modules/
+bun.lockb
+bun.lock
+
+# Environment & OS files
+.env
+.env.local
+.DS_Store
+Thumbs.db
