@@ -1,0 +1,26 @@
+{
+  "name": "redis-from-scratch",
+  "version": "1.0.0",
+  "description": "A high-performance custom Redis server built from scratch with TypeScript and Bun.",
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "start": "bun run src/index.ts",
+    "dev": "bun --watch src/index.ts",
+    "client": "bun run src/client.ts",
+    "test": "bun test"
+  },
+  "keywords": [
+    "redis",
+    "redis-server",
+    "resp-protocol",
+    "bun",
+    "typescript",
+    "tcp-server"
+  ],
+  "author": "Aniket Lad",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}

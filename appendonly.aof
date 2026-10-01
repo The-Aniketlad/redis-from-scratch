@@ -1,0 +1,2 @@
+SET superhero "Batman"
+HSET project:1 name "Redis" author "Aniket"
