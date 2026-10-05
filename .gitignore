@@ -1,6 +1,3 @@
-# Ignore all Markdown documentation files
-*.md
-
 # Ignore embedded challenge repository
 build-your-own-git/
 
