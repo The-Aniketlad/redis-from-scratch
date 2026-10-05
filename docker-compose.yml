@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  redis:
+    build: .
+    container_name: custom-redis-server
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./appendonly.aof:/app/appendonly.aof
+    restart: unless-stopped

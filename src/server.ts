@@ -2,6 +2,7 @@ import net from "net";
 import { parseRedisCommand, RespSerializer } from "./resp";
 import { globalStore } from "./store";
 import { AofPersistence } from "./persistence";
+import { globalPubSub } from "./pubsub";
 
 const DEFAULT_PORT = 6379;
 const HOST = "127.0.0.1";
@@ -237,6 +238,49 @@ export function startRedisServer(port: number = DEFAULT_PORT) {
       const command = args[0].toUpperCase();
       console.log(`[⚡] (${inTransaction ? "TX QUEUE" : "DIRECT"}) ${command}`, args.slice(1));
 
+      // ==================== Pub/Sub Commands ====================
+      if (command === "SUBSCRIBE") {
+        if (args.length < 2) {
+          socket.write(RespSerializer.error("wrong number of arguments for 'subscribe' command"));
+          return;
+        }
+
+        let resp = "";
+        for (let i = 1; i < args.length; i++) {
+          const count = globalPubSub.subscribe(socket, args[i]);
+          resp += `*3\r\n`;
+          resp += RespSerializer.bulkString("subscribe");
+          resp += RespSerializer.bulkString(args[i]);
+          resp += RespSerializer.integer(count);
+        }
+        socket.write(resp);
+        return;
+      }
+
+      if (command === "UNSUBSCRIBE") {
+        const channels = args.slice(1);
+        const results = globalPubSub.unsubscribe(socket, channels.length > 0 ? channels : undefined);
+        let resp = "";
+        for (const res of results) {
+          resp += `*3\r\n`;
+          resp += RespSerializer.bulkString("unsubscribe");
+          resp += RespSerializer.bulkString(res.channel);
+          resp += RespSerializer.integer(res.remaining);
+        }
+        socket.write(resp);
+        return;
+      }
+
+      if (command === "PUBLISH") {
+        if (args.length < 3) {
+          socket.write(RespSerializer.error("wrong number of arguments for 'publish' command"));
+          return;
+        }
+        const count = globalPubSub.publish(args[1], args[2]);
+        socket.write(RespSerializer.integer(count));
+        return;
+      }
+
       // ==================== Transaction Control ====================
       if (command === "MULTI") {
         if (inTransaction) {
@@ -301,10 +345,12 @@ export function startRedisServer(port: number = DEFAULT_PORT) {
 
     socket.on("end", () => {
       console.log(`[-] Client disconnected: ${clientAddress}`);
+      globalPubSub.removeSocket(socket);
     });
 
     socket.on("error", (err) => {
       console.error(`[!] Socket error (${clientAddress}):`, err.message);
+      globalPubSub.removeSocket(socket);
     });
   });
 
