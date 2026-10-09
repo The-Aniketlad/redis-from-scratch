@@ -121,7 +121,7 @@ bun run client
 | **System** | `PING` | `PING "hello"` | Health check; returns `+PONG` or echoed string |
 | **System** | `ECHO` | `ECHO "hello world"` | Echoes the input bulk string |
 | **System** | `FLUSHALL` | `FLUSHALL` | Clears all data across the server |
-| **Strings** | `SET` | `SET user "Aniket" EX 60` | Sets key with optional `EX` (sec) or `PX` (ms) TTL |
+| **Strings** | `SET` | `SET user "--name--" EX 60` | Sets key with optional `EX` (sec) or `PX` (ms) TTL |
 | **Strings** | `GET` | `GET user` | Retrieves string value (or `$-1` if expired/missing) |
 | **Strings** | `DEL` | `DEL user temp` | Deletes one or more keys |
 | **Strings** | `EXISTS` | `EXISTS user` | Returns count of keys that exist |
